@@ -3,6 +3,7 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 
 local ConfigFolder = "FloodUi"
 local ConfigFile = "FloodUiSettings.json"
@@ -194,19 +195,19 @@ function Library:CreateWindow(config)
     local LoadingTitleLabel = Create("TextLabel", {
         Parent = LoadingFrame,
         BackgroundTransparency = 1,
-        Position = UDim2.new(0.5, -200, 0.42, 0),
-        Size = UDim2.new(0, 400, 0, 40),
+        Position = UDim2.new(0.5, -200, 0.40, 0),
+        Size = UDim2.new(0, 400, 0, 45),
         Font = Enum.Font.GothamBold,
         Text = LoadingTitle,
         TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 32,
+        TextSize = 34,
         TextTransparency = 1
     })
 
     local LoadingSubtitleLabel = Create("TextLabel", {
         Parent = LoadingFrame,
         BackgroundTransparency = 1,
-        Position = UDim2.new(0.5, -200, 0.42, 45),
+        Position = UDim2.new(0.5, -200, 0.40, 50),
         Size = UDim2.new(0, 400, 0, 25),
         Font = Enum.Font.Gotham,
         Text = LoadingSubtitle,
@@ -219,8 +220,9 @@ function Library:CreateWindow(config)
         Parent = LoadingFrame,
         BackgroundColor3 = Color3.fromRGB(30, 30, 35),
         BorderSizePixel = 0,
-        Position = UDim2.new(0.5, -100, 0.55, 0),
-        Size = UDim2.new(0, 200, 0, 4)
+        Position = UDim2.new(0.5, -110, 0.55, 0),
+        Size = UDim2.new(0, 220, 0, 4),
+        BackgroundTransparency = 1
     })
     Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = LoadingBarBg})
 
@@ -232,18 +234,19 @@ function Library:CreateWindow(config)
     })
     Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = LoadingBar})
 
-    Tween(LoadingTitleLabel, {TextTransparency = 0}, 0.8)
-    task.wait(0.3)
-    Tween(LoadingSubtitleLabel, {TextTransparency = 0}, 0.7)
-    task.wait(0.2)
-    Tween(LoadingBar, {Size = UDim2.new(1, 0, 1, 0)}, 1.8, Enum.EasingStyle.Quad)
-    task.wait(2.2)
-    Tween(LoadingFrame, {BackgroundTransparency = 1}, 0.5)
-    Tween(LoadingTitleLabel, {TextTransparency = 1}, 0.4)
-    Tween(LoadingSubtitleLabel, {TextTransparency = 1}, 0.4)
-    Tween(LoadingBarBg, {BackgroundTransparency = 1}, 0.4)
-    Tween(LoadingBar, {BackgroundTransparency = 1}, 0.4)
-    task.wait(0.5)
+    Tween(LoadingTitleLabel, {TextTransparency = 0}, 0.9, Enum.EasingStyle.Quint)
+    task.wait(0.35)
+    Tween(LoadingSubtitleLabel, {TextTransparency = 0}, 0.8, Enum.EasingStyle.Quint)
+    task.wait(0.25)
+    Tween(LoadingBarBg, {BackgroundTransparency = 0}, 0.4)
+    Tween(LoadingBar, {Size = UDim2.new(1, 0, 1, 0)}, 2.0, Enum.EasingStyle.Quint)
+    task.wait(2.4)
+    Tween(LoadingTitleLabel, {TextTransparency = 1}, 0.5)
+    Tween(LoadingSubtitleLabel, {TextTransparency = 1}, 0.5)
+    Tween(LoadingBarBg, {BackgroundTransparency = 1}, 0.5)
+    Tween(LoadingBar, {BackgroundTransparency = 1}, 0.5)
+    Tween(LoadingFrame, {BackgroundTransparency = 1}, 0.6)
+    task.wait(0.65)
     LoadingFrame:Destroy()
 
     local Main = Create("Frame", {
@@ -257,7 +260,7 @@ function Library:CreateWindow(config)
         Visible = false
     })
     Create("UICorner", {CornerRadius = UDim.new(0, 12), Parent = Main})
-    Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Main})
+    local MainStroke = Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Main})
 
     local Shadow = Create("ImageLabel", {
         Name = "Shadow",
@@ -281,7 +284,9 @@ function Library:CreateWindow(config)
         Size = UDim2.new(1, 0, 0, 42)
     })
     Create("UICorner", {CornerRadius = UDim.new(0, 12), Parent = Topbar})
-    Create("Frame", {
+
+    local TopbarFix = Create("Frame", {
+        Name = "TopbarFix",
         Parent = Topbar,
         BackgroundColor3 = Theme.Topbar,
         BorderSizePixel = 0,
@@ -321,10 +326,10 @@ function Library:CreateWindow(config)
         BorderSizePixel = 0,
         Position = UDim2.new(1, -88, 0.5, -12),
         Size = UDim2.new(0, 36, 0, 24),
-        Font = Enum.Font.Gotham,
-        Text = "⚙",
+        Font = Enum.Font.GothamBold,
+        Text = "☰",
         TextColor3 = Theme.Text,
-        TextSize = 14,
+        TextSize = 16,
         AutoButtonColor = false
     })
     Create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = SettingsBtn})
@@ -426,7 +431,7 @@ function Library:CreateWindow(config)
         BackgroundColor3 = Theme.Element,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 16, 0, 78),
-        Size = UDim2.new(0, 160, 0, 34),
+        Size = UDim2.new(0, 180, 0, 34),
         Font = Enum.Font.Gotham,
         Text = ToggleKey.Name,
         TextColor3 = Theme.Text,
@@ -434,7 +439,42 @@ function Library:CreateWindow(config)
         AutoButtonColor = false
     })
     Create("UICorner", {CornerRadius = UDim.new(0, 7), Parent = KeybindBtn})
-    Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = KeybindBtn})
+    local KeybindStroke = Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = KeybindBtn})
+
+    local UnloadBtn = Create("TextButton", {
+        Parent = SettingsFrame,
+        BackgroundColor3 = Color3.fromRGB(180, 50, 50),
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 16, 0, 130),
+        Size = UDim2.new(0, 180, 0, 36),
+        Font = Enum.Font.GothamBold,
+        Text = "Unload Script",
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextSize = 13,
+        AutoButtonColor = false
+    })
+    Create("UICorner", {CornerRadius = UDim.new(0, 7), Parent = UnloadBtn})
+
+    UnloadBtn.MouseEnter:Connect(function()
+        Tween(UnloadBtn, {BackgroundColor3 = Color3.fromRGB(210, 60, 60)})
+    end)
+    UnloadBtn.MouseLeave:Connect(function()
+        Tween(UnloadBtn, {BackgroundColor3 = Color3.fromRGB(180, 50, 50)})
+    end)
+    UnloadBtn.MouseButton1Click:Connect(function()
+        Library:Notify({
+            Title = "Flood Ui",
+            Content = "Script descarregado.",
+            Duration = 2
+        })
+        task.wait(0.4)
+        if CoreGui:FindFirstChild("FloodUi") then
+            CoreGui.FloodUi:Destroy()
+        end
+        if CoreGui:FindFirstChild("FloodUiNotifications") then
+            CoreGui.FloodUiNotifications:Destroy()
+        end
+    end)
 
     local ChangingKeybind = false
     KeybindBtn.MouseButton1Click:Connect(function()
@@ -461,6 +501,27 @@ function Library:CreateWindow(config)
     local SelectedTab = nil
     local AllElements = {}
     local SettingsOpen = false
+    local FloatConnection = nil
+    local BaseY = 0
+
+    local function StartFloating()
+        if FloatConnection then FloatConnection:Disconnect() end
+        BaseY = Main.Position.Y.Offset
+        local t = 0
+        FloatConnection = RunService.RenderStepped:Connect(function(dt)
+            if not Main or not Main.Parent or Dragging then return end
+            t = t + dt
+            local offset = math.sin(t * 1.2) * 4
+            Main.Position = UDim2.new(Main.Position.X.Scale, Main.Position.X.Offset, Main.Position.Y.Scale, BaseY + offset)
+        end)
+    end
+
+    local function StopFloating()
+        if FloatConnection then
+            FloatConnection:Disconnect()
+            FloatConnection = nil
+        end
+    end
 
     local function ApplyTheme(themeName)
         CurrentTheme = themeName
@@ -469,19 +530,20 @@ function Library:CreateWindow(config)
 
         Tween(Main, {BackgroundColor3 = Theme.Background})
         Tween(Topbar, {BackgroundColor3 = Theme.Topbar})
+        Tween(TopbarFix, {BackgroundColor3 = Theme.Topbar})
         Tween(Title, {TextColor3 = Theme.Text})
         Tween(CloseBtn, {TextColor3 = Theme.TextDark})
         Tween(ThemeBtn, {BackgroundColor3 = Theme.Element, TextColor3 = Theme.Text})
         Tween(SettingsBtn, {BackgroundColor3 = Theme.Element, TextColor3 = Theme.Text})
         Tween(TabContainer, {BackgroundColor3 = Theme.TabContainer})
         Tween(Shadow, {ImageColor3 = Theme.Shadow})
-        Main.UIStroke.Color = Theme.Stroke
+        MainStroke.Color = Theme.Stroke
         SettingsFrame.BackgroundColor3 = Theme.Background
         SettingsTitle.TextColor3 = Theme.Text
         KeybindLabel.TextColor3 = Theme.TextDark
         KeybindBtn.BackgroundColor3 = Theme.Element
         KeybindBtn.TextColor3 = Theme.Text
-        KeybindBtn.UIStroke.Color = Theme.Stroke
+        KeybindStroke.Color = Theme.Stroke
 
         for _, el in pairs(AllElements) do
             if el.ApplyTheme then
@@ -522,9 +584,23 @@ function Library:CreateWindow(config)
             Main.Visible = true
             Main.Size = UDim2.new(0, 520, 0, 0)
             Main.BackgroundTransparency = 1
-            Tween(Main, {Size = UDim2.new(0, 520, 0, 380), BackgroundTransparency = 0}, 0.4, Enum.EasingStyle.Back)
+            Main.Position = UDim2.new(0.5, -260, 0.5, -100)
+            Tween(Main, {
+                Size = UDim2.new(0, 520, 0, 380),
+                BackgroundTransparency = 0,
+                Position = UDim2.new(0.5, -260, 0.5, -190)
+            }, 0.55, Enum.EasingStyle.Back)
+            task.delay(0.6, function()
+                BaseY = Main.Position.Y.Offset
+                StartFloating()
+            end)
         else
-            local tw = Tween(Main, {Size = UDim2.new(0, 520, 0, 0), BackgroundTransparency = 1}, 0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+            StopFloating()
+            local tw = Tween(Main, {
+                Size = UDim2.new(0, 520, 0, 0),
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0.5, -260, 0.5, -100)
+            }, 0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
             tw.Completed:Connect(function()
                 if not UIVisible then
                     Main.Visible = false
@@ -651,7 +727,7 @@ function Library:CreateWindow(config)
                 AutoButtonColor = false
             })
             Create("UICorner", {CornerRadius = UDim.new(0, 7), Parent = Btn})
-            Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Btn})
+            local BtnStroke = Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Btn})
 
             Btn.MouseEnter:Connect(function()
                 Tween(Btn, {BackgroundColor3 = Theme.ElementHover})
@@ -670,7 +746,7 @@ function Library:CreateWindow(config)
                 ApplyTheme = function()
                     Btn.BackgroundColor3 = Theme.Element
                     Btn.TextColor3 = Theme.Text
-                    Btn.UIStroke.Color = Theme.Stroke
+                    BtnStroke.Color = Theme.Stroke
                 end
             })
         end
@@ -686,7 +762,7 @@ function Library:CreateWindow(config)
                 Size = UDim2.new(1, 0, 0, 42)
             })
             Create("UICorner", {CornerRadius = UDim.new(0, 7), Parent = Frame})
-            Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Frame})
+            local FrameStroke = Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Frame})
 
             local Label = Create("TextLabel", {
                 Parent = Frame,
@@ -733,7 +809,7 @@ function Library:CreateWindow(config)
                 ApplyTheme = function()
                     Frame.BackgroundColor3 = Theme.Element
                     Label.TextColor3 = Theme.Text
-                    Frame.UIStroke.Color = Theme.Stroke
+                    FrameStroke.Color = Theme.Stroke
                     ToggleBg.BackgroundColor3 = Value and Theme.Accent or Theme.ToggleOff
                     Circle.BackgroundColor3 = CurrentTheme == "Dark" and Color3.fromRGB(20, 20, 25) or Color3.fromRGB(255, 255, 255)
                 end
@@ -754,7 +830,7 @@ function Library:CreateWindow(config)
                 Size = UDim2.new(1, 0, 0, 54)
             })
             Create("UICorner", {CornerRadius = UDim.new(0, 7), Parent = Frame})
-            Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Frame})
+            local FrameStroke = Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Frame})
 
             local Label = Create("TextLabel", {
                 Parent = Frame,
@@ -824,7 +900,7 @@ function Library:CreateWindow(config)
                     Frame.BackgroundColor3 = Theme.Element
                     Label.TextColor3 = Theme.Text
                     ValueLabel.TextColor3 = Theme.Accent
-                    Frame.UIStroke.Color = Theme.Stroke
+                    FrameStroke.Color = Theme.Stroke
                     SliderBg.BackgroundColor3 = Theme.ToggleOff
                     Fill.BackgroundColor3 = Theme.Accent
                 end
@@ -845,7 +921,7 @@ function Library:CreateWindow(config)
                 ClipsDescendants = true
             })
             Create("UICorner", {CornerRadius = UDim.new(0, 7), Parent = Frame})
-            Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Frame})
+            local FrameStroke = Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Frame})
 
             local Label = Create("TextLabel", {
                 Parent = Frame,
@@ -920,7 +996,7 @@ function Library:CreateWindow(config)
                     Frame.BackgroundColor3 = Theme.Element
                     Label.TextColor3 = Theme.Text
                     Arrow.TextColor3 = Theme.TextDark
-                    Frame.UIStroke.Color = Theme.Stroke
+                    FrameStroke.Color = Theme.Stroke
                     OptionsFrame.BackgroundColor3 = Theme.TabContainer
                 end
             })
