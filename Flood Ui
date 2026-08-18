@@ -856,7 +856,25 @@ function Library:CreateWindow(config)
         function Tab:CreateSlider(opts)
             opts = opts or {}
             local Min, Max = opts.Min or 0, opts.Max or 100
-            local Value = opts.Default or Min
+            local Increment = opts.Increment or 1
+            local Decimals = math.max(0, tostring(Increment):find("%.") and #(tostring(Increment):match("%.(%d+)")) or 0)
+
+            local function Round(n)
+                n = math.clamp(n, Min, Max)
+                local stepped = Min + math.floor((n - Min) / Increment + 0.5) * Increment
+                stepped = math.clamp(stepped, Min, Max)
+                local mult = 10 ^ Decimals
+                return math.floor(stepped * mult + 0.5) / mult
+            end
+
+            local function Format(n)
+                if Decimals > 0 then
+                    return string.format("%." .. Decimals .. "f", n)
+                end
+                return tostring(math.floor(n))
+            end
+
+            local Value = Round(opts.Default or Min)
 
             local Frame = Create("Frame", {
                 Parent = Elements,
@@ -885,7 +903,7 @@ function Library:CreateWindow(config)
                 Position = UDim2.new(0.65, 0, 0, 6),
                 Size = UDim2.new(0.35, -14, 0, 18),
                 Font = Enum.Font.GothamMedium,
-                Text = tostring(Value),
+                Text = Format(Value),
                 TextColor3 = Theme.Accent,
                 TextSize = 13,
                 TextXAlignment = Enum.TextXAlignment.Right
@@ -907,12 +925,17 @@ function Library:CreateWindow(config)
             Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = Fill})
 
             local Sliding = false
+            local function SetValue(newValue, fireCallback)
+                Value = Round(newValue)
+                local pos = (Max > Min) and ((Value - Min) / (Max - Min)) or 0
+                Fill.Size = UDim2.new(pos, 0, 1, 0)
+                ValueLabel.Text = Format(Value)
+                if fireCallback ~= false and opts.Callback then opts.Callback(Value) end
+            end
+
             local function Update(input)
                 local pos = math.clamp((input.Position.X - SliderBg.AbsolutePosition.X) / SliderBg.AbsoluteSize.X, 0, 1)
-                Value = math.floor(Min + (Max - Min) * pos)
-                Fill.Size = UDim2.new(pos, 0, 1, 0)
-                ValueLabel.Text = tostring(Value)
-                if opts.Callback then opts.Callback(Value) end
+                SetValue(Min + (Max - Min) * pos)
             end
 
             local SliderClick = Create("TextButton", {
@@ -954,6 +977,11 @@ function Library:CreateWindow(config)
                     Fill.BackgroundColor3 = Theme.Accent
                 end
             })
+
+            return {
+                Set = function(v) SetValue(v, false) end,
+                Get = function() return Value end
+            }
         end
 
         function Tab:CreateDropdown(opts)
