@@ -373,7 +373,7 @@ function Library:CreateWindow(config)
         BackgroundColor3 = Theme.TabContainer,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 42),
-        Size = UDim2.new(0, 135, 1, -42),
+        Size = UDim2.new(0, 155, 1, -42),
         Visible = false
     })
 
@@ -392,8 +392,8 @@ function Library:CreateWindow(config)
     local Content = Create("Frame", {
         Parent = Main,
         BackgroundTransparency = 1,
-        Position = UDim2.new(0, 135, 0, 42),
-        Size = UDim2.new(1, -135, 1, -42),
+        Position = UDim2.new(0, 155, 0, 42),
+        Size = UDim2.new(1, -155, 1, -42),
         Visible = false
     })
 
@@ -401,8 +401,8 @@ function Library:CreateWindow(config)
         Parent = Main,
         BackgroundColor3 = Theme.Background,
         BorderSizePixel = 0,
-        Position = UDim2.new(0, 135, 0, 42),
-        Size = UDim2.new(1, -135, 1, -42),
+        Position = UDim2.new(0, 155, 0, 42),
+        Size = UDim2.new(1, -155, 1, -42),
         Visible = false,
         ZIndex = 10
     })
@@ -659,13 +659,25 @@ function Library:CreateWindow(config)
             BackgroundColor3 = Theme.Element,
             BorderSizePixel = 0,
             Size = UDim2.new(1, 0, 0, 34),
-            Font = Enum.Font.GothamMedium,
-            Text = TabName,
-            TextColor3 = Theme.TextDark,
-            TextSize = 13,
+            Text = "",
+            ClipsDescendants = true,
             AutoButtonColor = false
         })
         Create("UICorner", {CornerRadius = UDim.new(0, 7), Parent = TabButton})
+
+        local TabLabel = Create("TextLabel", {
+            Parent = TabButton,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, 8, 0, 0),
+            Size = UDim2.new(1, -16, 1, 0),
+            Font = Enum.Font.GothamMedium,
+            Text = TabName,
+            TextColor3 = Theme.TextDark,
+            TextSize = 11,
+            TextTruncate = Enum.TextTruncate.AtEnd,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Center
+        })
 
         local Elements = Create("ScrollingFrame", {
             Parent = Content,
@@ -702,12 +714,14 @@ function Library:CreateWindow(config)
             SettingsFrame.Visible = false
             if SelectedTab then
                 Tween(SelectedTab.Button, {BackgroundColor3 = Theme.Element})
-                SelectedTab.Button.TextColor3 = Theme.TextDark
+                if SelectedTab.Label then
+                    SelectedTab.Label.TextColor3 = Theme.TextDark
+                end
                 SelectedTab.Elements.Visible = false
             end
-            SelectedTab = {Button = TabButton, Elements = Elements}
+            SelectedTab = {Button = TabButton, Elements = Elements, Label = TabLabel}
             Tween(TabButton, {BackgroundColor3 = Theme.Accent})
-            TabButton.TextColor3 = CurrentTheme == "Dark" and Color3.fromRGB(10, 10, 12) or Color3.fromRGB(255, 255, 255)
+            TabLabel.TextColor3 = CurrentTheme == "Dark" and Color3.fromRGB(10, 10, 12) or Color3.fromRGB(255, 255, 255)
             Elements.Visible = true
         end
 
@@ -731,10 +745,10 @@ function Library:CreateWindow(config)
             ApplyTheme = function()
                 if SelectedTab and SelectedTab.Button == TabButton then
                     TabButton.BackgroundColor3 = Theme.Accent
-                    TabButton.TextColor3 = CurrentTheme == "Dark" and Color3.fromRGB(10, 10, 12) or Color3.fromRGB(255, 255, 255)
+                    TabLabel.TextColor3 = CurrentTheme == "Dark" and Color3.fromRGB(10, 10, 12) or Color3.fromRGB(255, 255, 255)
                 else
                     TabButton.BackgroundColor3 = Theme.Element
-                    TabButton.TextColor3 = Theme.TextDark
+                    TabLabel.TextColor3 = Theme.TextDark
                 end
             end
         })
