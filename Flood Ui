@@ -187,8 +187,8 @@ function Library:CreateWindow(config)
         Parent = ScreenGui,
         BackgroundColor3 = Theme.Background,
         BorderSizePixel = 0,
-        Position = UDim2.new(0.5, -210, 0.5, -50),
-        Size = UDim2.new(0, 420, 0, 100),
+        Position = UDim2.new(0.5, -160, 0.5, -55),
+        Size = UDim2.new(0, 320, 0, 110),
         ClipsDescendants = true,
         BackgroundTransparency = 1,
         Visible = true
@@ -218,27 +218,39 @@ function Library:CreateWindow(config)
         Visible = true
     })
 
+    local LoadingBrandLabel = Create("TextLabel", {
+        Parent = LoadingFrame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 0, 0.08, 0),
+        Size = UDim2.new(1, 0, 0, 16),
+        Font = Enum.Font.Gotham,
+        Text = "Flood Ui",
+        TextColor3 = Theme.TextDark,
+        TextSize = 11,
+        TextTransparency = 1
+    })
+
     local LoadingTitleLabel = Create("TextLabel", {
         Parent = LoadingFrame,
         BackgroundTransparency = 1,
-        Position = UDim2.new(0, 0, 0.22, 0),
-        Size = UDim2.new(1, 0, 0, 30),
+        Position = UDim2.new(0, 0, 0.28, 0),
+        Size = UDim2.new(1, 0, 0, 28),
         Font = Enum.Font.GothamBold,
         Text = LoadingTitle,
         TextColor3 = Theme.Text,
-        TextSize = 22,
+        TextSize = 20,
         TextTransparency = 1
     })
 
     local LoadingSubtitleLabel = Create("TextLabel", {
         Parent = LoadingFrame,
         BackgroundTransparency = 1,
-        Position = UDim2.new(0, 0, 0.52, 0),
-        Size = UDim2.new(1, 0, 0, 22),
+        Position = UDim2.new(0, 0, 0.58, 0),
+        Size = UDim2.new(1, 0, 0, 20),
         Font = Enum.Font.Gotham,
         Text = LoadingSubtitle,
         TextColor3 = Theme.TextDark,
-        TextSize = 14,
+        TextSize = 13,
         TextTransparency = 1
     })
 
@@ -293,13 +305,21 @@ function Library:CreateWindow(config)
         BorderSizePixel = 0,
         Position = UDim2.new(1, -90, 0.5, -12),
         Size = UDim2.new(0, 40, 0, 24),
-        Font = Enum.Font.GothamBold,
-        Text = "Cfg",
-        TextColor3 = Theme.Text,
-        TextSize = 11,
+        Text = "",
         AutoButtonColor = false
     })
     Create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = SettingsBtn})
+
+    for i = 0, 2 do
+        local line = Create("Frame", {
+            Parent = SettingsBtn,
+            BackgroundColor3 = Theme.Text,
+            BorderSizePixel = 0,
+            Position = UDim2.new(0.5, -8, 0, 6 + i * 5),
+            Size = UDim2.new(0, 16, 0, 2)
+        })
+        Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = line})
+    end
 
     local CloseBtn = Create("TextButton", {
         Parent = Topbar,
@@ -495,7 +515,12 @@ function Library:CreateWindow(config)
         Tween(Title, {TextColor3 = Theme.Text})
         Tween(CloseBtn, {TextColor3 = Theme.TextDark})
         Tween(ThemeBtn, {BackgroundColor3 = Theme.Element, TextColor3 = Theme.Text})
-        Tween(SettingsBtn, {BackgroundColor3 = Theme.Element, TextColor3 = Theme.Text})
+        Tween(SettingsBtn, {BackgroundColor3 = Theme.Element})
+        for _, child in pairs(SettingsBtn:GetChildren()) do
+            if child:IsA("Frame") then
+                child.BackgroundColor3 = Theme.Text
+            end
+        end
         Tween(TabContainer, {BackgroundColor3 = Theme.TabContainer})
         Tween(Shadow, {ImageColor3 = Theme.Shadow})
         MainStroke.Color = Theme.Stroke
@@ -588,11 +613,14 @@ function Library:CreateWindow(config)
         Tween(Main, {BackgroundTransparency = 0}, 0.7, Enum.EasingStyle.Exponential)
         Tween(Shadow, {ImageTransparency = 0.55}, 0.7, Enum.EasingStyle.Exponential)
         Tween(MainStroke, {Transparency = 0}, 0.7, Enum.EasingStyle.Exponential)
-        task.wait(0.15)
+        task.wait(0.12)
+        Tween(LoadingBrandLabel, {TextTransparency = 0}, 0.6, Enum.EasingStyle.Exponential)
+        task.wait(0.08)
         Tween(LoadingTitleLabel, {TextTransparency = 0}, 0.7, Enum.EasingStyle.Exponential)
         task.wait(0.08)
         Tween(LoadingSubtitleLabel, {TextTransparency = 0}, 0.7, Enum.EasingStyle.Exponential)
-        task.wait(1.6)
+        task.wait(1.5)
+        Tween(LoadingBrandLabel, {TextTransparency = 1}, 0.35, Enum.EasingStyle.Quint)
         Tween(LoadingTitleLabel, {TextTransparency = 1}, 0.4, Enum.EasingStyle.Quint)
         Tween(LoadingSubtitleLabel, {TextTransparency = 1}, 0.4, Enum.EasingStyle.Quint)
         task.wait(0.35)
@@ -786,7 +814,8 @@ function Library:CreateWindow(config)
             local ClickBtn = Create("TextButton", {
                 Parent = Frame,
                 BackgroundTransparency = 1,
-                Size = UDim2.new(1, 0, 1, 0),
+                Position = UDim2.new(1, -52, 0.5, -11),
+                Size = UDim2.new(0, 40, 0, 22),
                 Text = "",
                 ZIndex = 5,
                 AutoButtonColor = false
