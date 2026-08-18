@@ -3,7 +3,6 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
-local RunService = game:GetService("RunService")
 
 local ConfigFolder = "FloodUi"
 local ConfigFile = "FloodUiSettings.json"
@@ -122,7 +121,7 @@ function Library:Notify(opts)
     })
     Create("UICorner", {CornerRadius = UDim.new(0, 10), Parent = AccentBar})
 
-    local TitleLabel = Create("TextLabel", {
+    Create("TextLabel", {
         Parent = Notif,
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 16, 0, 10),
@@ -134,7 +133,7 @@ function Library:Notify(opts)
         TextXAlignment = Enum.TextXAlignment.Left
     })
 
-    local ContentLabel = Create("TextLabel", {
+    Create("TextLabel", {
         Parent = Notif,
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 16, 0, 32),
@@ -183,84 +182,19 @@ function Library:CreateWindow(config)
         ResetOnSpawn = false
     })
 
-    local LoadingFrame = Create("Frame", {
-        Name = "LoadingFrame",
-        Parent = ScreenGui,
-        BackgroundColor3 = Color3.fromRGB(10, 10, 12),
-        BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 1, 0),
-        ZIndex = 100
-    })
-
-    local LoadingTitleLabel = Create("TextLabel", {
-        Parent = LoadingFrame,
-        BackgroundTransparency = 1,
-        Position = UDim2.new(0.5, -200, 0.40, 0),
-        Size = UDim2.new(0, 400, 0, 45),
-        Font = Enum.Font.GothamBold,
-        Text = LoadingTitle,
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 34,
-        TextTransparency = 1
-    })
-
-    local LoadingSubtitleLabel = Create("TextLabel", {
-        Parent = LoadingFrame,
-        BackgroundTransparency = 1,
-        Position = UDim2.new(0.5, -200, 0.40, 50),
-        Size = UDim2.new(0, 400, 0, 25),
-        Font = Enum.Font.Gotham,
-        Text = LoadingSubtitle,
-        TextColor3 = Color3.fromRGB(180, 180, 190),
-        TextSize = 16,
-        TextTransparency = 1
-    })
-
-    local LoadingBarBg = Create("Frame", {
-        Parent = LoadingFrame,
-        BackgroundColor3 = Color3.fromRGB(30, 30, 35),
-        BorderSizePixel = 0,
-        Position = UDim2.new(0.5, -110, 0.55, 0),
-        Size = UDim2.new(0, 220, 0, 4),
-        BackgroundTransparency = 1
-    })
-    Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = LoadingBarBg})
-
-    local LoadingBar = Create("Frame", {
-        Parent = LoadingBarBg,
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BorderSizePixel = 0,
-        Size = UDim2.new(0, 0, 1, 0)
-    })
-    Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = LoadingBar})
-
-    Tween(LoadingTitleLabel, {TextTransparency = 0}, 0.9, Enum.EasingStyle.Quint)
-    task.wait(0.35)
-    Tween(LoadingSubtitleLabel, {TextTransparency = 0}, 0.8, Enum.EasingStyle.Quint)
-    task.wait(0.25)
-    Tween(LoadingBarBg, {BackgroundTransparency = 0}, 0.4)
-    Tween(LoadingBar, {Size = UDim2.new(1, 0, 1, 0)}, 2.0, Enum.EasingStyle.Quint)
-    task.wait(2.4)
-    Tween(LoadingTitleLabel, {TextTransparency = 1}, 0.5)
-    Tween(LoadingSubtitleLabel, {TextTransparency = 1}, 0.5)
-    Tween(LoadingBarBg, {BackgroundTransparency = 1}, 0.5)
-    Tween(LoadingBar, {BackgroundTransparency = 1}, 0.5)
-    Tween(LoadingFrame, {BackgroundTransparency = 1}, 0.6)
-    task.wait(0.65)
-    LoadingFrame:Destroy()
-
     local Main = Create("Frame", {
         Name = "Main",
         Parent = ScreenGui,
         BackgroundColor3 = Theme.Background,
         BorderSizePixel = 0,
-        Position = UDim2.new(0.5, -260, 0.5, -190),
-        Size = UDim2.new(0, 520, 0, 380),
+        Position = UDim2.new(0.5, -210, 0.5, -50),
+        Size = UDim2.new(0, 420, 0, 100),
         ClipsDescendants = true,
-        Visible = false
+        BackgroundTransparency = 1,
+        Visible = true
     })
     Create("UICorner", {CornerRadius = UDim.new(0, 12), Parent = Main})
-    local MainStroke = Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Main})
+    local MainStroke = Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Transparency = 1, Parent = Main})
 
     local Shadow = Create("ImageLabel", {
         Name = "Shadow",
@@ -271,9 +205,41 @@ function Library:CreateWindow(config)
         ZIndex = 0,
         Image = "rbxassetid://6014261993",
         ImageColor3 = Theme.Shadow,
-        ImageTransparency = 0.4,
+        ImageTransparency = 1,
         ScaleType = Enum.ScaleType.Slice,
         SliceCenter = Rect.new(49, 49, 450, 450)
+    })
+
+    local LoadingFrame = Create("Frame", {
+        Name = "LoadingFrame",
+        Parent = Main,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 1, 0),
+        Visible = true
+    })
+
+    local LoadingTitleLabel = Create("TextLabel", {
+        Parent = LoadingFrame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 0, 0.22, 0),
+        Size = UDim2.new(1, 0, 0, 30),
+        Font = Enum.Font.GothamBold,
+        Text = LoadingTitle,
+        TextColor3 = Theme.Text,
+        TextSize = 22,
+        TextTransparency = 1
+    })
+
+    local LoadingSubtitleLabel = Create("TextLabel", {
+        Parent = LoadingFrame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 0, 0.52, 0),
+        Size = UDim2.new(1, 0, 0, 22),
+        Font = Enum.Font.Gotham,
+        Text = LoadingSubtitle,
+        TextColor3 = Theme.TextDark,
+        TextSize = 14,
+        TextTransparency = 1
     })
 
     local Topbar = Create("Frame", {
@@ -281,7 +247,8 @@ function Library:CreateWindow(config)
         Parent = Main,
         BackgroundColor3 = Theme.Topbar,
         BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 0, 42)
+        Size = UDim2.new(1, 0, 0, 42),
+        Visible = false
     })
     Create("UICorner", {CornerRadius = UDim.new(0, 12), Parent = Topbar})
 
@@ -370,7 +337,8 @@ function Library:CreateWindow(config)
         BackgroundColor3 = Theme.TabContainer,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 42),
-        Size = UDim2.new(0, 135, 1, -42)
+        Size = UDim2.new(0, 135, 1, -42),
+        Visible = false
     })
 
     local TabList = Create("ScrollingFrame", {
@@ -389,7 +357,8 @@ function Library:CreateWindow(config)
         Parent = Main,
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 135, 0, 42),
-        Size = UDim2.new(1, -135, 1, -42)
+        Size = UDim2.new(1, -135, 1, -42),
+        Visible = false
     })
 
     local SettingsFrame = Create("Frame", {
@@ -461,19 +430,32 @@ function Library:CreateWindow(config)
     UnloadBtn.MouseLeave:Connect(function()
         Tween(UnloadBtn, {BackgroundColor3 = Color3.fromRGB(180, 50, 50)})
     end)
-    UnloadBtn.MouseButton1Click:Connect(function()
-        Library:Notify({
-            Title = "Flood Ui",
-            Content = "Script descarregado.",
-            Duration = 2
-        })
-        task.wait(0.4)
+
+    local function DoUnload()
+        Tween(Main, {
+            Size = UDim2.new(0, 420, 0, 0),
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0.5, -210, 0.5, 0)
+        }, 0.4, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+        Tween(Shadow, {ImageTransparency = 1}, 0.35)
+        Tween(MainStroke, {Transparency = 1}, 0.35)
+        task.wait(0.45)
         if CoreGui:FindFirstChild("FloodUi") then
             CoreGui.FloodUi:Destroy()
         end
         if CoreGui:FindFirstChild("FloodUiNotifications") then
             CoreGui.FloodUiNotifications:Destroy()
         end
+    end
+
+    UnloadBtn.MouseButton1Click:Connect(function()
+        Library:Notify({
+            Title = "Flood Ui",
+            Content = "Descarregando script...",
+            Duration = 2
+        })
+        task.wait(0.3)
+        DoUnload()
     end)
 
     local ChangingKeybind = false
@@ -501,27 +483,6 @@ function Library:CreateWindow(config)
     local SelectedTab = nil
     local AllElements = {}
     local SettingsOpen = false
-    local FloatConnection = nil
-    local BaseY = 0
-
-    local function StartFloating()
-        if FloatConnection then FloatConnection:Disconnect() end
-        BaseY = Main.Position.Y.Offset
-        local t = 0
-        FloatConnection = RunService.RenderStepped:Connect(function(dt)
-            if not Main or not Main.Parent or Dragging then return end
-            t = t + dt
-            local offset = math.sin(t * 1.2) * 4
-            Main.Position = UDim2.new(Main.Position.X.Scale, Main.Position.X.Offset, Main.Position.Y.Scale, BaseY + offset)
-        end)
-    end
-
-    local function StopFloating()
-        if FloatConnection then
-            FloatConnection:Disconnect()
-            FloatConnection = nil
-        end
-    end
 
     local function ApplyTheme(themeName)
         CurrentTheme = themeName
@@ -575,33 +536,21 @@ function Library:CreateWindow(config)
         end
     end)
 
-    local UIVisible = false
+    local UIVisible = true
     local function ToggleUI(state)
         if state == nil then state = not UIVisible end
         UIVisible = state
 
         if UIVisible then
             Main.Visible = true
-            Main.Size = UDim2.new(0, 520, 0, 0)
-            Main.BackgroundTransparency = 1
-            Main.Position = UDim2.new(0.5, -260, 0.5, -100)
-            Tween(Main, {
-                Size = UDim2.new(0, 520, 0, 380),
-                BackgroundTransparency = 0,
-                Position = UDim2.new(0.5, -260, 0.5, -190)
-            }, 0.55, Enum.EasingStyle.Back)
-            task.delay(0.6, function()
-                BaseY = Main.Position.Y.Offset
-                StartFloating()
-            end)
+            Tween(Main, {BackgroundTransparency = 0}, 0.35)
+            Tween(Shadow, {ImageTransparency = 0.4}, 0.35)
+            Tween(MainStroke, {Transparency = 0}, 0.35)
         else
-            StopFloating()
-            local tw = Tween(Main, {
-                Size = UDim2.new(0, 520, 0, 0),
-                BackgroundTransparency = 1,
-                Position = UDim2.new(0.5, -260, 0.5, -100)
-            }, 0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
-            tw.Completed:Connect(function()
+            Tween(Main, {BackgroundTransparency = 1}, 0.3)
+            Tween(Shadow, {ImageTransparency = 1}, 0.3)
+            Tween(MainStroke, {Transparency = 1}, 0.3)
+            task.delay(0.35, function()
                 if not UIVisible then
                     Main.Visible = false
                 end
@@ -619,8 +568,28 @@ function Library:CreateWindow(config)
         end
     end)
 
-    task.defer(function()
-        ToggleUI(true)
+    task.spawn(function()
+        task.wait(0.15)
+        Tween(Main, {BackgroundTransparency = 0}, 0.7, Enum.EasingStyle.Exponential)
+        Tween(Shadow, {ImageTransparency = 0.55}, 0.7, Enum.EasingStyle.Exponential)
+        Tween(MainStroke, {Transparency = 0}, 0.7, Enum.EasingStyle.Exponential)
+        task.wait(0.15)
+        Tween(LoadingTitleLabel, {TextTransparency = 0}, 0.7, Enum.EasingStyle.Exponential)
+        task.wait(0.08)
+        Tween(LoadingSubtitleLabel, {TextTransparency = 0}, 0.7, Enum.EasingStyle.Exponential)
+        task.wait(1.6)
+        Tween(LoadingTitleLabel, {TextTransparency = 1}, 0.4, Enum.EasingStyle.Quint)
+        Tween(LoadingSubtitleLabel, {TextTransparency = 1}, 0.4, Enum.EasingStyle.Quint)
+        task.wait(0.35)
+        LoadingFrame.Visible = false
+        Topbar.Visible = true
+        TabContainer.Visible = true
+        Content.Visible = true
+        Tween(Main, {
+            Size = UDim2.new(0, 520, 0, 380),
+            Position = UDim2.new(0.5, -260, 0.5, -190)
+        }, 0.65, Enum.EasingStyle.Exponential)
+        Tween(Shadow, {ImageTransparency = 0.4}, 0.5)
     end)
 
     local Window = {}
