@@ -751,10 +751,18 @@ function Library:CreateWindow(config)
                 Font = Enum.Font.Gotham,
                 Text = opts.Name or "Button",
                 TextColor3 = Theme.Text,
-                TextSize = 13,
+                TextSize = 12,
+                TextWrapped = true,
+                TextTruncate = Enum.TextTruncate.AtEnd,
+                TextXAlignment = Enum.TextXAlignment.Left,
                 AutoButtonColor = false
             })
             Create("UICorner", {CornerRadius = UDim.new(0, 7), Parent = Btn})
+            Create("UIPadding", {
+                Parent = Btn,
+                PaddingLeft = UDim.new(0, 12),
+                PaddingRight = UDim.new(0, 12)
+            })
             local BtnStroke = Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Btn})
 
             Btn.MouseEnter:Connect(function()
@@ -800,7 +808,8 @@ function Library:CreateWindow(config)
                 Font = Enum.Font.Gotham,
                 Text = opts.Name or "Toggle",
                 TextColor3 = Theme.Text,
-                TextSize = 13,
+                TextSize = 12,
+                TextTruncate = Enum.TextTruncate.AtEnd,
                 TextXAlignment = Enum.TextXAlignment.Left
             })
 
@@ -875,7 +884,8 @@ function Library:CreateWindow(config)
                 Font = Enum.Font.Gotham,
                 Text = opts.Name or "Slider",
                 TextColor3 = Theme.Text,
-                TextSize = 13,
+                TextSize = 12,
+                TextTruncate = Enum.TextTruncate.AtEnd,
                 TextXAlignment = Enum.TextXAlignment.Left
             })
 
@@ -980,7 +990,8 @@ function Library:CreateWindow(config)
                 Font = Enum.Font.Gotham,
                 Text = (opts.Name or "Dropdown") .. ": " .. tostring(Selected),
                 TextColor3 = Theme.Text,
-                TextSize = 13,
+                TextSize = 12,
+                TextTruncate = Enum.TextTruncate.AtEnd,
                 TextXAlignment = Enum.TextXAlignment.Left
             })
 
@@ -1065,7 +1076,9 @@ function Library:CreateWindow(config)
                 Font = Enum.Font.Gotham,
                 Text = text or "Label",
                 TextColor3 = Theme.TextDark,
-                TextSize = 13,
+                TextSize = 12,
+                TextWrapped = true,
+                TextTruncate = Enum.TextTruncate.AtEnd,
                 TextXAlignment = Enum.TextXAlignment.Left
             })
             table.insert(AllElements, {
