@@ -469,9 +469,9 @@ function Library:CreateWindow(config)
 
     local function DoUnload()
         Tween(Main, {
-            Size = UDim2.new(0, 420, 0, 0),
+            Size = UDim2.new(0, 640, 0, 0),
             BackgroundTransparency = 1,
-            Position = UDim2.new(0.5, -210, 0.5, 0)
+            Position = UDim2.new(0.5, -320, 0.5, 0)
         }, 0.4, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
         Tween(Shadow, {ImageTransparency = 1}, 0.35)
         Tween(MainStroke, {Transparency = 1}, 0.35)
@@ -578,8 +578,8 @@ function Library:CreateWindow(config)
     end)
 
     local UIVisible = true
-    local SavedSize = UDim2.new(0, 560, 0, 420)
-    local SavedPos = UDim2.new(0.5, -280, 0.5, -210)
+    local SavedSize = UDim2.new(0, 640, 0, 460)
+    local SavedPos = UDim2.new(0.5, -320, 0.5, -230)
 
     local function ToggleUI(state)
         if state == nil then state = not UIVisible end
@@ -587,7 +587,7 @@ function Library:CreateWindow(config)
 
         if UIVisible then
             Main.Visible = true
-            Main.Size = UDim2.new(0, 560, 0, 0)
+            Main.Size = UDim2.new(0, 640, 0, 0)
             Main.Position = UDim2.new(SavedPos.X.Scale, SavedPos.X.Offset, SavedPos.Y.Scale, SavedPos.Y.Offset + 40)
             Main.BackgroundTransparency = 1
             Tween(Main, {
@@ -600,7 +600,7 @@ function Library:CreateWindow(config)
         else
             SavedPos = Main.Position
             Tween(Main, {
-                Size = UDim2.new(0, 560, 0, 0),
+                Size = UDim2.new(0, 640, 0, 0),
                 Position = UDim2.new(Main.Position.X.Scale, Main.Position.X.Offset, Main.Position.Y.Scale, Main.Position.Y.Offset + 40),
                 BackgroundTransparency = 1
             }, 0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
@@ -645,8 +645,8 @@ function Library:CreateWindow(config)
         TabContainer.Visible = true
         Content.Visible = true
         Tween(Main, {
-            Size = UDim2.new(0, 560, 0, 420),
-            Position = UDim2.new(0.5, -280, 0.5, -210)
+            Size = UDim2.new(0, 640, 0, 460),
+            Position = UDim2.new(0.5, -320, 0.5, -230)
         }, 0.65, Enum.EasingStyle.Exponential)
         Tween(Shadow, {ImageTransparency = 0.4}, 0.5)
     end)
@@ -747,7 +747,19 @@ function Library:CreateWindow(config)
                 Parent = Elements,
                 BackgroundColor3 = Theme.Element,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 38),
+                Size = UDim2.new(1, 0, 0, 40),
+                Text = "",
+                ClipsDescendants = true,
+                AutoButtonColor = false
+            })
+            Create("UICorner", {CornerRadius = UDim.new(0, 7), Parent = Btn})
+            local BtnStroke = Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Btn})
+
+            local BtnLabel = Create("TextLabel", {
+                Parent = Btn,
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0, 12, 0, 0),
+                Size = UDim2.new(1, -24, 1, 0),
                 Font = Enum.Font.Gotham,
                 Text = opts.Name or "Button",
                 TextColor3 = Theme.Text,
@@ -755,15 +767,8 @@ function Library:CreateWindow(config)
                 TextWrapped = true,
                 TextTruncate = Enum.TextTruncate.AtEnd,
                 TextXAlignment = Enum.TextXAlignment.Left,
-                AutoButtonColor = false
+                TextYAlignment = Enum.TextYAlignment.Center
             })
-            Create("UICorner", {CornerRadius = UDim.new(0, 7), Parent = Btn})
-            Create("UIPadding", {
-                Parent = Btn,
-                PaddingLeft = UDim.new(0, 12),
-                PaddingRight = UDim.new(0, 12)
-            })
-            local BtnStroke = Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Btn})
 
             Btn.MouseEnter:Connect(function()
                 Tween(Btn, {BackgroundColor3 = Theme.ElementHover})
@@ -772,16 +777,16 @@ function Library:CreateWindow(config)
                 Tween(Btn, {BackgroundColor3 = Theme.Element})
             end)
             Btn.MouseButton1Click:Connect(function()
-                Tween(Btn, {Size = UDim2.new(1, -4, 0, 34)}, 0.08)
+                Tween(Btn, {Size = UDim2.new(1, -4, 0, 36)}, 0.08)
                 task.wait(0.08)
-                Tween(Btn, {Size = UDim2.new(1, 0, 0, 38)}, 0.12)
+                Tween(Btn, {Size = UDim2.new(1, 0, 0, 40)}, 0.12)
                 if opts.Callback then opts.Callback() end
             end)
 
             table.insert(AllElements, {
                 ApplyTheme = function()
                     Btn.BackgroundColor3 = Theme.Element
-                    Btn.TextColor3 = Theme.Text
+                    BtnLabel.TextColor3 = Theme.Text
                     BtnStroke.Color = Theme.Stroke
                 end
             })
