@@ -102,6 +102,31 @@ local function Tween(obj, props, time, style, direction)
     return tw
 end
 
+local TextService = game:GetService("TextService")
+
+local function FitText(text, font, textSize, maxWidth)
+    text = tostring(text or "")
+    if maxWidth <= 0 then return text end
+    local full = TextService:GetTextSize(text, textSize, font, Vector2.new(10000, textSize + 4))
+    if full.X <= maxWidth then
+        return text
+    end
+    local low, high = 0, #text
+    local best = "..."
+    while low <= high do
+        local mid = math.floor((low + high) / 2)
+        local candidate = string.sub(text, 1, mid) .. "..."
+        local size = TextService:GetTextSize(candidate, textSize, font, Vector2.new(10000, textSize + 4))
+        if size.X <= maxWidth then
+            best = candidate
+            low = mid + 1
+        else
+            high = mid - 1
+        end
+    end
+    return best
+end
+
 function Library:Notify(opts)
     opts = opts or {}
     local Title = opts.Title or "Flood Ui"
@@ -374,7 +399,8 @@ function Library:CreateWindow(config)
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 42),
         Size = UDim2.new(0, 155, 1, -42),
-        Visible = false
+        Visible = false,
+        ClipsDescendants = true
     })
 
     local TabList = Create("ScrollingFrame", {
@@ -671,13 +697,17 @@ function Library:CreateWindow(config)
             Position = UDim2.new(0, 8, 0, 0),
             Size = UDim2.new(1, -16, 1, 0),
             Font = Enum.Font.GothamMedium,
-            Text = TabName,
+            Text = "",
             TextColor3 = Theme.TextDark,
             TextSize = 11,
-            TextTruncate = Enum.TextTruncate.AtEnd,
             TextXAlignment = Enum.TextXAlignment.Left,
-            TextYAlignment = Enum.TextYAlignment.Center
+            TextYAlignment = Enum.TextYAlignment.Center,
+            ClipsDescendants = true
         })
+        task.defer(function()
+            local maxW = math.max(TabLabel.AbsoluteSize.X, 100)
+            TabLabel.Text = FitText(TabName, Enum.Font.GothamMedium, 11, maxW)
+        end)
 
         local Elements = Create("ScrollingFrame", {
             Parent = Content,
@@ -775,14 +805,17 @@ function Library:CreateWindow(config)
                 Position = UDim2.new(0, 12, 0, 0),
                 Size = UDim2.new(1, -24, 1, 0),
                 Font = Enum.Font.Gotham,
-                Text = opts.Name or "Button",
+                Text = "",
                 TextColor3 = Theme.Text,
                 TextSize = 12,
-                TextWrapped = true,
-                TextTruncate = Enum.TextTruncate.AtEnd,
                 TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Center
+                TextYAlignment = Enum.TextYAlignment.Center,
+                ClipsDescendants = true
             })
+            task.defer(function()
+                local maxW = math.max(BtnLabel.AbsoluteSize.X, 120)
+                BtnLabel.Text = FitText(opts.Name or "Button", Enum.Font.Gotham, 12, maxW)
+            end)
 
             Btn.MouseEnter:Connect(function()
                 Tween(Btn, {BackgroundColor3 = Theme.ElementHover})
