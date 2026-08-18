@@ -40,31 +40,47 @@ local CurrentTheme = "Dark"
 local Theme = Themes.Dark
 local ToggleKey = Enum.KeyCode.RightControl
 
+local ConfigLoaded = false
+
 local function SaveUIConfig()
-    if not writefile then return end
     pcall(function()
-        if not isfolder(ConfigFolder) then
-            makefolder(ConfigFolder)
+        if writefile then
+            if isfolder and not isfolder(ConfigFolder) then
+                if makefolder then makefolder(ConfigFolder) end
+            end
+            local data = {
+                Theme = CurrentTheme,
+                ToggleKey = tostring(ToggleKey.Name)
+            }
+            writefile(ConfigFolder .. "/" .. ConfigFile, HttpService:JSONEncode(data))
         end
-        local data = {
-            Theme = CurrentTheme,
-            ToggleKey = ToggleKey.Name
-        }
-        writefile(ConfigFolder .. "/" .. ConfigFile, HttpService:JSONEncode(data))
     end)
 end
 
 local function LoadUIConfig()
-    if not readfile or not isfile then return end
     pcall(function()
-        if isfile(ConfigFolder .. "/" .. ConfigFile) then
-            local data = HttpService:JSONDecode(readfile(ConfigFolder .. "/" .. ConfigFile))
+        if not readfile then return end
+        local path = ConfigFolder .. "/" .. ConfigFile
+        local exists = false
+        if isfile then
+            exists = isfile(path)
+        else
+            local ok, _ = pcall(function() readfile(path) end)
+            exists = ok
+        end
+        if exists then
+            local raw = readfile(path)
+            local data = HttpService:JSONDecode(raw)
             if data.Theme and Themes[data.Theme] then
                 CurrentTheme = data.Theme
                 Theme = Themes[CurrentTheme]
             end
-            if data.ToggleKey and Enum.KeyCode[data.ToggleKey] then
-                ToggleKey = Enum.KeyCode[data.ToggleKey]
+            if data.ToggleKey then
+                local key = Enum.KeyCode[data.ToggleKey]
+                if key then
+                    ToggleKey = key
+                    ConfigLoaded = true
+                end
             end
         end
     end)
@@ -167,7 +183,7 @@ function Library:CreateWindow(config)
     Themes.Light.Accent = Color3.fromRGB(30, 30, 35)
     Theme = Themes[CurrentTheme]
 
-    if config.ToggleKey then
+    if config.ToggleKey and not ConfigLoaded then
         ToggleKey = config.ToggleKey
     end
 
@@ -391,6 +407,50 @@ function Library:CreateWindow(config)
         ZIndex = 10
     })
 
+    local ResizeHandle = Create("TextButton", {
+        Parent = Main,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(1, -18, 1, -18),
+        Size = UDim2.new(0, 18, 0, 18),
+        Text = "",
+        ZIndex = 20,
+        AutoButtonColor = false
+    })
+    local ResizeIcon = Create("TextLabel", {
+        Parent = ResizeHandle,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 1, 0),
+        Font = Enum.Font.GothamBold,
+        Text = "⌟",
+        TextColor3 = Theme.TextDark,
+        TextSize = 14,
+        TextXAlignment = Enum.TextXAlignment.Right,
+        TextYAlignment = Enum.TextYAlignment.Bottom
+    })
+
+    local Resizing = false
+    local ResizeStart, StartSize
+    ResizeHandle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            Resizing = true
+            ResizeStart = input.Position
+            StartSize = Main.Size
+        end
+    end)
+    ResizeHandle.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            Resizing = false
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if Resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local delta = input.Position - ResizeStart
+            local newW = math.clamp(StartSize.X.Offset + delta.X, 400, 900)
+            local newH = math.clamp(StartSize.Y.Offset + delta.Y, 280, 700)
+            Main.Size = UDim2.new(0, newW, 0, newH)
+        end
+    end)
+
     local SettingsTitle = Create("TextLabel", {
         Parent = SettingsFrame,
         BackgroundTransparency = 1,
@@ -514,6 +574,7 @@ function Library:CreateWindow(config)
         Tween(TopbarFix, {BackgroundColor3 = Theme.Topbar})
         Tween(Title, {TextColor3 = Theme.Text})
         Tween(CloseBtn, {TextColor3 = Theme.TextDark})
+        if ResizeIcon then ResizeIcon.TextColor3 = Theme.TextDark end
         Tween(ThemeBtn, {BackgroundColor3 = Theme.Element, TextColor3 = Theme.Text})
         Tween(SettingsBtn, {BackgroundColor3 = Theme.Element})
         for _, child in pairs(SettingsBtn:GetChildren()) do
@@ -997,16 +1058,22 @@ function Library:CreateWindow(config)
                 end)
             end
 
-            Frame.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    Open = not Open
-                    if Open then
-                        Tween(Frame, {Size = UDim2.new(1, 0, 0, 42 + #Options * 32)}, 0.3, Enum.EasingStyle.Back)
-                        Arrow.Text = "▲"
-                    else
-                        Tween(Frame, {Size = UDim2.new(1, 0, 0, 42)}, 0.25)
-                        Arrow.Text = "▼"
-                    end
+            local DropClick = Create("TextButton", {
+                Parent = Frame,
+                BackgroundTransparency = 1,
+                Size = UDim2.new(1, 0, 0, 42),
+                Text = "",
+                ZIndex = 3,
+                AutoButtonColor = false
+            })
+            DropClick.MouseButton1Click:Connect(function()
+                Open = not Open
+                if Open then
+                    Tween(Frame, {Size = UDim2.new(1, 0, 0, 42 + #Options * 32)}, 0.3, Enum.EasingStyle.Back)
+                    Arrow.Text = "▲"
+                else
+                    Tween(Frame, {Size = UDim2.new(1, 0, 0, 42)}, 0.25)
+                    Arrow.Text = "▼"
                 end
             end)
 
