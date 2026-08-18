@@ -407,50 +407,6 @@ function Library:CreateWindow(config)
         ZIndex = 10
     })
 
-    local ResizeHandle = Create("TextButton", {
-        Parent = Main,
-        BackgroundTransparency = 1,
-        Position = UDim2.new(1, -18, 1, -18),
-        Size = UDim2.new(0, 18, 0, 18),
-        Text = "",
-        ZIndex = 20,
-        AutoButtonColor = false
-    })
-    local ResizeIcon = Create("TextLabel", {
-        Parent = ResizeHandle,
-        BackgroundTransparency = 1,
-        Size = UDim2.new(1, 0, 1, 0),
-        Font = Enum.Font.GothamBold,
-        Text = "⌟",
-        TextColor3 = Theme.TextDark,
-        TextSize = 14,
-        TextXAlignment = Enum.TextXAlignment.Right,
-        TextYAlignment = Enum.TextYAlignment.Bottom
-    })
-
-    local Resizing = false
-    local ResizeStart, StartSize
-    ResizeHandle.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            Resizing = true
-            ResizeStart = input.Position
-            StartSize = Main.Size
-        end
-    end)
-    ResizeHandle.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            Resizing = false
-        end
-    end)
-    UserInputService.InputChanged:Connect(function(input)
-        if Resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = input.Position - ResizeStart
-            local newW = math.clamp(StartSize.X.Offset + delta.X, 400, 900)
-            local newH = math.clamp(StartSize.Y.Offset + delta.Y, 280, 700)
-            Main.Size = UDim2.new(0, newW, 0, newH)
-        end
-    end)
-
     local SettingsTitle = Create("TextLabel", {
         Parent = SettingsFrame,
         BackgroundTransparency = 1,
@@ -574,7 +530,6 @@ function Library:CreateWindow(config)
         Tween(TopbarFix, {BackgroundColor3 = Theme.Topbar})
         Tween(Title, {TextColor3 = Theme.Text})
         Tween(CloseBtn, {TextColor3 = Theme.TextDark})
-        if ResizeIcon then ResizeIcon.TextColor3 = Theme.TextDark end
         Tween(ThemeBtn, {BackgroundColor3 = Theme.Element, TextColor3 = Theme.Text})
         Tween(SettingsBtn, {BackgroundColor3 = Theme.Element})
         for _, child in pairs(SettingsBtn:GetChildren()) do
@@ -623,8 +578,8 @@ function Library:CreateWindow(config)
     end)
 
     local UIVisible = true
-    local SavedSize = UDim2.new(0, 520, 0, 380)
-    local SavedPos = UDim2.new(0.5, -260, 0.5, -190)
+    local SavedSize = UDim2.new(0, 560, 0, 420)
+    local SavedPos = UDim2.new(0.5, -280, 0.5, -210)
 
     local function ToggleUI(state)
         if state == nil then state = not UIVisible end
@@ -632,7 +587,7 @@ function Library:CreateWindow(config)
 
         if UIVisible then
             Main.Visible = true
-            Main.Size = UDim2.new(0, 520, 0, 0)
+            Main.Size = UDim2.new(0, 560, 0, 0)
             Main.Position = UDim2.new(SavedPos.X.Scale, SavedPos.X.Offset, SavedPos.Y.Scale, SavedPos.Y.Offset + 40)
             Main.BackgroundTransparency = 1
             Tween(Main, {
@@ -645,7 +600,7 @@ function Library:CreateWindow(config)
         else
             SavedPos = Main.Position
             Tween(Main, {
-                Size = UDim2.new(0, 520, 0, 0),
+                Size = UDim2.new(0, 560, 0, 0),
                 Position = UDim2.new(Main.Position.X.Scale, Main.Position.X.Offset, Main.Position.Y.Scale, Main.Position.Y.Offset + 40),
                 BackgroundTransparency = 1
             }, 0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
@@ -690,8 +645,8 @@ function Library:CreateWindow(config)
         TabContainer.Visible = true
         Content.Visible = true
         Tween(Main, {
-            Size = UDim2.new(0, 520, 0, 380),
-            Position = UDim2.new(0.5, -260, 0.5, -190)
+            Size = UDim2.new(0, 560, 0, 420),
+            Position = UDim2.new(0.5, -280, 0.5, -210)
         }, 0.65, Enum.EasingStyle.Exponential)
         Tween(Shadow, {ImageTransparency = 0.4}, 0.5)
     end)
@@ -960,10 +915,24 @@ function Library:CreateWindow(config)
                 if opts.Callback then opts.Callback(Value) end
             end
 
-            SliderBg.InputBegan:Connect(function(input)
+            local SliderClick = Create("TextButton", {
+                Parent = Frame,
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0, 14, 0, 28),
+                Size = UDim2.new(1, -28, 0, 20),
+                Text = "",
+                ZIndex = 5,
+                AutoButtonColor = false
+            })
+            SliderClick.InputBegan:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     Sliding = true
                     Update(input)
+                end
+            end)
+            SliderClick.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    Sliding = false
                 end
             end)
             UserInputService.InputEnded:Connect(function(input)
