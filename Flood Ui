@@ -277,12 +277,12 @@ function Library:CreateWindow(config)
         Parent = Topbar,
         BackgroundColor3 = Theme.Element,
         BorderSizePixel = 0,
-        Position = UDim2.new(1, -130, 0.5, -12),
-        Size = UDim2.new(0, 36, 0, 24),
-        Font = Enum.Font.Gotham,
-        Text = CurrentTheme == "Dark" and "☀" or "☾",
+        Position = UDim2.new(1, -145, 0.5, -12),
+        Size = UDim2.new(0, 50, 0, 24),
+        Font = Enum.Font.GothamBold,
+        Text = CurrentTheme == "Dark" and "Light" or "Dark",
         TextColor3 = Theme.Text,
-        TextSize = 14,
+        TextSize = 11,
         AutoButtonColor = false
     })
     Create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = ThemeBtn})
@@ -291,12 +291,12 @@ function Library:CreateWindow(config)
         Parent = Topbar,
         BackgroundColor3 = Theme.Element,
         BorderSizePixel = 0,
-        Position = UDim2.new(1, -88, 0.5, -12),
-        Size = UDim2.new(0, 36, 0, 24),
+        Position = UDim2.new(1, -90, 0.5, -12),
+        Size = UDim2.new(0, 40, 0, 24),
         Font = Enum.Font.GothamBold,
-        Text = "☰",
+        Text = "Cfg",
         TextColor3 = Theme.Text,
-        TextSize = 16,
+        TextSize = 11,
         AutoButtonColor = false
     })
     Create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = SettingsBtn})
@@ -487,7 +487,7 @@ function Library:CreateWindow(config)
     local function ApplyTheme(themeName)
         CurrentTheme = themeName
         Theme = Themes[themeName]
-        ThemeBtn.Text = themeName == "Dark" and "☀" or "☾"
+        ThemeBtn.Text = themeName == "Dark" and "Light" or "Dark"
 
         Tween(Main, {BackgroundColor3 = Theme.Background})
         Tween(Topbar, {BackgroundColor3 = Theme.Topbar})
@@ -517,9 +517,9 @@ function Library:CreateWindow(config)
 
     ThemeBtn.MouseButton1Click:Connect(function()
         ApplyTheme(CurrentTheme == "Dark" and "Light" or "Dark")
-        Tween(ThemeBtn, {Size = UDim2.new(0, 32, 0, 22)}, 0.1)
+        Tween(ThemeBtn, {Size = UDim2.new(0, 46, 0, 22)}, 0.1)
         task.wait(0.1)
-        Tween(ThemeBtn, {Size = UDim2.new(0, 36, 0, 24)}, 0.15)
+        Tween(ThemeBtn, {Size = UDim2.new(0, 50, 0, 24)}, 0.15)
     end)
 
     SettingsBtn.MouseButton1Click:Connect(function()
@@ -537,20 +537,35 @@ function Library:CreateWindow(config)
     end)
 
     local UIVisible = true
+    local SavedSize = UDim2.new(0, 520, 0, 380)
+    local SavedPos = UDim2.new(0.5, -260, 0.5, -190)
+
     local function ToggleUI(state)
         if state == nil then state = not UIVisible end
         UIVisible = state
 
         if UIVisible then
             Main.Visible = true
-            Tween(Main, {BackgroundTransparency = 0}, 0.35)
-            Tween(Shadow, {ImageTransparency = 0.4}, 0.35)
-            Tween(MainStroke, {Transparency = 0}, 0.35)
+            Main.Size = UDim2.new(0, 520, 0, 0)
+            Main.Position = UDim2.new(SavedPos.X.Scale, SavedPos.X.Offset, SavedPos.Y.Scale, SavedPos.Y.Offset + 40)
+            Main.BackgroundTransparency = 1
+            Tween(Main, {
+                Size = SavedSize,
+                Position = SavedPos,
+                BackgroundTransparency = 0
+            }, 0.45, Enum.EasingStyle.Back)
+            Tween(Shadow, {ImageTransparency = 0.4}, 0.4)
+            Tween(MainStroke, {Transparency = 0}, 0.4)
         else
-            Tween(Main, {BackgroundTransparency = 1}, 0.3)
+            SavedPos = Main.Position
+            Tween(Main, {
+                Size = UDim2.new(0, 520, 0, 0),
+                Position = UDim2.new(Main.Position.X.Scale, Main.Position.X.Offset, Main.Position.Y.Scale, Main.Position.Y.Offset + 40),
+                BackgroundTransparency = 1
+            }, 0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
             Tween(Shadow, {ImageTransparency = 1}, 0.3)
             Tween(MainStroke, {Transparency = 1}, 0.3)
-            task.delay(0.35, function()
+            task.delay(0.4, function()
                 if not UIVisible then
                     Main.Visible = false
                 end
@@ -768,10 +783,16 @@ function Library:CreateWindow(config)
                 if opts.Callback then opts.Callback(Value) end
             end
 
-            Frame.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    Set(not Value)
-                end
+            local ClickBtn = Create("TextButton", {
+                Parent = Frame,
+                BackgroundTransparency = 1,
+                Size = UDim2.new(1, 0, 1, 0),
+                Text = "",
+                ZIndex = 5,
+                AutoButtonColor = false
+            })
+            ClickBtn.MouseButton1Click:Connect(function()
+                Set(not Value)
             end)
 
             table.insert(AllElements, {
