@@ -9,16 +9,16 @@ local ConfigFile = "FloodUiSettings.json"
 
 local Themes = {
     Dark = {
-        Background = Color3.fromRGB(15, 15, 18),
-        Topbar = Color3.fromRGB(20, 20, 25),
-        TabContainer = Color3.fromRGB(18, 18, 22),
-        Element = Color3.fromRGB(25, 25, 30),
-        ElementHover = Color3.fromRGB(35, 35, 42),
-        Text = Color3.fromRGB(240, 240, 240),
-        TextDark = Color3.fromRGB(160, 160, 170),
-        Accent = Color3.fromRGB(100, 100, 255),
-        Stroke = Color3.fromRGB(40, 40, 50),
-        ToggleOff = Color3.fromRGB(50, 50, 60),
+        Background = Color3.fromRGB(12, 12, 14),
+        Topbar = Color3.fromRGB(18, 18, 20),
+        TabContainer = Color3.fromRGB(16, 16, 18),
+        Element = Color3.fromRGB(24, 24, 28),
+        ElementHover = Color3.fromRGB(34, 34, 40),
+        Text = Color3.fromRGB(245, 245, 245),
+        TextDark = Color3.fromRGB(150, 150, 160),
+        Accent = Color3.fromRGB(255, 255, 255),
+        Stroke = Color3.fromRGB(40, 40, 48),
+        ToggleOff = Color3.fromRGB(45, 45, 55),
         Shadow = Color3.fromRGB(0, 0, 0)
     },
     Light = {
@@ -29,7 +29,7 @@ local Themes = {
         ElementHover = Color3.fromRGB(230, 230, 240),
         Text = Color3.fromRGB(20, 20, 25),
         TextDark = Color3.fromRGB(80, 80, 90),
-        Accent = Color3.fromRGB(80, 80, 220),
+        Accent = Color3.fromRGB(30, 30, 35),
         Stroke = Color3.fromRGB(200, 200, 210),
         ToggleOff = Color3.fromRGB(180, 180, 190),
         Shadow = Color3.fromRGB(150, 150, 160)
@@ -86,13 +86,85 @@ local function Tween(obj, props, time, style, direction)
     return tw
 end
 
+function Library:Notify(opts)
+    opts = opts or {}
+    local Title = opts.Title or "Flood Ui"
+    local Content = opts.Content or ""
+    local Duration = opts.Duration or 4
+
+    local NotifGui = CoreGui:FindFirstChild("FloodUiNotifications")
+    if not NotifGui then
+        NotifGui = Create("ScreenGui", {
+            Name = "FloodUiNotifications",
+            Parent = CoreGui,
+            ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+            ResetOnSpawn = false
+        })
+    end
+
+    local Notif = Create("Frame", {
+        Parent = NotifGui,
+        BackgroundColor3 = Theme.Element,
+        BorderSizePixel = 0,
+        Position = UDim2.new(1, 20, 1, -80),
+        Size = UDim2.new(0, 280, 0, 70),
+        ClipsDescendants = true
+    })
+    Create("UICorner", {CornerRadius = UDim.new(0, 10), Parent = Notif})
+    Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = Notif})
+
+    local AccentBar = Create("Frame", {
+        Parent = Notif,
+        BackgroundColor3 = Theme.Accent,
+        BorderSizePixel = 0,
+        Size = UDim2.new(0, 4, 1, 0)
+    })
+    Create("UICorner", {CornerRadius = UDim.new(0, 10), Parent = AccentBar})
+
+    local TitleLabel = Create("TextLabel", {
+        Parent = Notif,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 16, 0, 10),
+        Size = UDim2.new(1, -30, 0, 20),
+        Font = Enum.Font.GothamBold,
+        Text = Title,
+        TextColor3 = Theme.Text,
+        TextSize = 14,
+        TextXAlignment = Enum.TextXAlignment.Left
+    })
+
+    local ContentLabel = Create("TextLabel", {
+        Parent = Notif,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 16, 0, 32),
+        Size = UDim2.new(1, -30, 0, 28),
+        Font = Enum.Font.Gotham,
+        Text = Content,
+        TextColor3 = Theme.TextDark,
+        TextSize = 12,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextWrapped = true
+    })
+
+    Tween(Notif, {Position = UDim2.new(1, -300, 1, -80)}, 0.45, Enum.EasingStyle.Back)
+
+    task.delay(Duration, function()
+        local tw = Tween(Notif, {Position = UDim2.new(1, 20, 1, -80)}, 0.35)
+        tw.Completed:Connect(function()
+            Notif:Destroy()
+        end)
+    end)
+end
+
 function Library:CreateWindow(config)
     config = config or {}
     local Name = config.Name or "Flood Ui"
-    local ThemeColor = config.Theme or Color3.fromRGB(100, 100, 255)
+    local LoadingTitle = config.LoadingTitle or "Flood Ui"
+    local LoadingSubtitle = config.LoadingSubtitle or "Loading..."
+    local ThemeColor = config.Theme or Color3.fromRGB(255, 255, 255)
 
     Themes.Dark.Accent = ThemeColor
-    Themes.Light.Accent = ThemeColor
+    Themes.Light.Accent = Color3.fromRGB(30, 30, 35)
     Theme = Themes[CurrentTheme]
 
     if config.ToggleKey then
@@ -109,6 +181,70 @@ function Library:CreateWindow(config)
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         ResetOnSpawn = false
     })
+
+    local LoadingFrame = Create("Frame", {
+        Name = "LoadingFrame",
+        Parent = ScreenGui,
+        BackgroundColor3 = Color3.fromRGB(10, 10, 12),
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 1, 0),
+        ZIndex = 100
+    })
+
+    local LoadingTitleLabel = Create("TextLabel", {
+        Parent = LoadingFrame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0.5, -200, 0.42, 0),
+        Size = UDim2.new(0, 400, 0, 40),
+        Font = Enum.Font.GothamBold,
+        Text = LoadingTitle,
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextSize = 32,
+        TextTransparency = 1
+    })
+
+    local LoadingSubtitleLabel = Create("TextLabel", {
+        Parent = LoadingFrame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0.5, -200, 0.42, 45),
+        Size = UDim2.new(0, 400, 0, 25),
+        Font = Enum.Font.Gotham,
+        Text = LoadingSubtitle,
+        TextColor3 = Color3.fromRGB(180, 180, 190),
+        TextSize = 16,
+        TextTransparency = 1
+    })
+
+    local LoadingBarBg = Create("Frame", {
+        Parent = LoadingFrame,
+        BackgroundColor3 = Color3.fromRGB(30, 30, 35),
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.5, -100, 0.55, 0),
+        Size = UDim2.new(0, 200, 0, 4)
+    })
+    Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = LoadingBarBg})
+
+    local LoadingBar = Create("Frame", {
+        Parent = LoadingBarBg,
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BorderSizePixel = 0,
+        Size = UDim2.new(0, 0, 1, 0)
+    })
+    Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = LoadingBar})
+
+    Tween(LoadingTitleLabel, {TextTransparency = 0}, 0.8)
+    task.wait(0.3)
+    Tween(LoadingSubtitleLabel, {TextTransparency = 0}, 0.7)
+    task.wait(0.2)
+    Tween(LoadingBar, {Size = UDim2.new(1, 0, 1, 0)}, 1.8, Enum.EasingStyle.Quad)
+    task.wait(2.2)
+    Tween(LoadingFrame, {BackgroundTransparency = 1}, 0.5)
+    Tween(LoadingTitleLabel, {TextTransparency = 1}, 0.4)
+    Tween(LoadingSubtitleLabel, {TextTransparency = 1}, 0.4)
+    Tween(LoadingBarBg, {BackgroundTransparency = 1}, 0.4)
+    Tween(LoadingBar, {BackgroundTransparency = 1}, 0.4)
+    task.wait(0.5)
+    LoadingFrame:Destroy()
 
     local Main = Create("Frame", {
         Name = "Main",
@@ -157,7 +293,7 @@ function Library:CreateWindow(config)
         Parent = Topbar,
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 16, 0, 0),
-        Size = UDim2.new(1, -120, 1, 0),
+        Size = UDim2.new(1, -150, 1, 0),
         Font = Enum.Font.GothamBold,
         Text = Name,
         TextColor3 = Theme.Text,
@@ -169,8 +305,8 @@ function Library:CreateWindow(config)
         Parent = Topbar,
         BackgroundColor3 = Theme.Element,
         BorderSizePixel = 0,
-        Position = UDim2.new(1, -95, 0.5, -12),
-        Size = UDim2.new(0, 50, 0, 24),
+        Position = UDim2.new(1, -130, 0.5, -12),
+        Size = UDim2.new(0, 36, 0, 24),
         Font = Enum.Font.Gotham,
         Text = CurrentTheme == "Dark" and "☀" or "☾",
         TextColor3 = Theme.Text,
@@ -178,6 +314,20 @@ function Library:CreateWindow(config)
         AutoButtonColor = false
     })
     Create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = ThemeBtn})
+
+    local SettingsBtn = Create("TextButton", {
+        Parent = Topbar,
+        BackgroundColor3 = Theme.Element,
+        BorderSizePixel = 0,
+        Position = UDim2.new(1, -88, 0.5, -12),
+        Size = UDim2.new(0, 36, 0, 24),
+        Font = Enum.Font.Gotham,
+        Text = "⚙",
+        TextColor3 = Theme.Text,
+        TextSize = 14,
+        AutoButtonColor = false
+    })
+    Create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = SettingsBtn})
 
     local CloseBtn = Create("TextButton", {
         Parent = Topbar,
@@ -237,8 +387,80 @@ function Library:CreateWindow(config)
         Size = UDim2.new(1, -135, 1, -42)
     })
 
+    local SettingsFrame = Create("Frame", {
+        Parent = Main,
+        BackgroundColor3 = Theme.Background,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 135, 0, 42),
+        Size = UDim2.new(1, -135, 1, -42),
+        Visible = false,
+        ZIndex = 10
+    })
+
+    local SettingsTitle = Create("TextLabel", {
+        Parent = SettingsFrame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 16, 0, 12),
+        Size = UDim2.new(1, -32, 0, 25),
+        Font = Enum.Font.GothamBold,
+        Text = "Configurações",
+        TextColor3 = Theme.Text,
+        TextSize = 16,
+        TextXAlignment = Enum.TextXAlignment.Left
+    })
+
+    local KeybindLabel = Create("TextLabel", {
+        Parent = SettingsFrame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 16, 0, 50),
+        Size = UDim2.new(1, -32, 0, 20),
+        Font = Enum.Font.Gotham,
+        Text = "Keybind (Abrir/Fechar)",
+        TextColor3 = Theme.TextDark,
+        TextSize = 13,
+        TextXAlignment = Enum.TextXAlignment.Left
+    })
+
+    local KeybindBtn = Create("TextButton", {
+        Parent = SettingsFrame,
+        BackgroundColor3 = Theme.Element,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 16, 0, 78),
+        Size = UDim2.new(0, 160, 0, 34),
+        Font = Enum.Font.Gotham,
+        Text = ToggleKey.Name,
+        TextColor3 = Theme.Text,
+        TextSize = 13,
+        AutoButtonColor = false
+    })
+    Create("UICorner", {CornerRadius = UDim.new(0, 7), Parent = KeybindBtn})
+    Create("UIStroke", {Color = Theme.Stroke, Thickness = 1, Parent = KeybindBtn})
+
+    local ChangingKeybind = false
+    KeybindBtn.MouseButton1Click:Connect(function()
+        if ChangingKeybind then return end
+        ChangingKeybind = true
+        KeybindBtn.Text = "Pressione uma tecla..."
+        local connection
+        connection = UserInputService.InputBegan:Connect(function(input, gpe)
+            if input.UserInputType == Enum.UserInputType.Keyboard then
+                ToggleKey = input.KeyCode
+                KeybindBtn.Text = ToggleKey.Name
+                ChangingKeybind = false
+                SaveUIConfig()
+                Library:Notify({
+                    Title = "Keybind Atualizada",
+                    Content = "Nova tecla: " .. ToggleKey.Name,
+                    Duration = 3
+                })
+                connection:Disconnect()
+            end
+        end)
+    end)
+
     local SelectedTab = nil
     local AllElements = {}
+    local SettingsOpen = false
 
     local function ApplyTheme(themeName)
         CurrentTheme = themeName
@@ -250,9 +472,16 @@ function Library:CreateWindow(config)
         Tween(Title, {TextColor3 = Theme.Text})
         Tween(CloseBtn, {TextColor3 = Theme.TextDark})
         Tween(ThemeBtn, {BackgroundColor3 = Theme.Element, TextColor3 = Theme.Text})
+        Tween(SettingsBtn, {BackgroundColor3 = Theme.Element, TextColor3 = Theme.Text})
         Tween(TabContainer, {BackgroundColor3 = Theme.TabContainer})
         Tween(Shadow, {ImageColor3 = Theme.Shadow})
         Main.UIStroke.Color = Theme.Stroke
+        SettingsFrame.BackgroundColor3 = Theme.Background
+        SettingsTitle.TextColor3 = Theme.Text
+        KeybindLabel.TextColor3 = Theme.TextDark
+        KeybindBtn.BackgroundColor3 = Theme.Element
+        KeybindBtn.TextColor3 = Theme.Text
+        KeybindBtn.UIStroke.Color = Theme.Stroke
 
         for _, el in pairs(AllElements) do
             if el.ApplyTheme then
@@ -265,9 +494,23 @@ function Library:CreateWindow(config)
 
     ThemeBtn.MouseButton1Click:Connect(function()
         ApplyTheme(CurrentTheme == "Dark" and "Light" or "Dark")
-        Tween(ThemeBtn, {Size = UDim2.new(0, 46, 0, 22)}, 0.1)
+        Tween(ThemeBtn, {Size = UDim2.new(0, 32, 0, 22)}, 0.1)
         task.wait(0.1)
-        Tween(ThemeBtn, {Size = UDim2.new(0, 50, 0, 24)}, 0.15)
+        Tween(ThemeBtn, {Size = UDim2.new(0, 36, 0, 24)}, 0.15)
+    end)
+
+    SettingsBtn.MouseButton1Click:Connect(function()
+        SettingsOpen = not SettingsOpen
+        SettingsFrame.Visible = SettingsOpen
+        if SettingsOpen then
+            if SelectedTab then
+                SelectedTab.Elements.Visible = false
+            end
+        else
+            if SelectedTab then
+                SelectedTab.Elements.Visible = true
+            end
+        end
     end)
 
     local UIVisible = false
@@ -295,7 +538,7 @@ function Library:CreateWindow(config)
     end)
 
     UserInputService.InputBegan:Connect(function(input, gpe)
-        if not gpe and input.KeyCode == ToggleKey then
+        if not gpe and input.KeyCode == ToggleKey and not ChangingKeybind then
             ToggleUI()
         end
     end)
@@ -351,6 +594,8 @@ function Library:CreateWindow(config)
         end)
 
         local function Select()
+            SettingsOpen = false
+            SettingsFrame.Visible = false
             if SelectedTab then
                 Tween(SelectedTab.Button, {BackgroundColor3 = Theme.Element})
                 SelectedTab.Button.TextColor3 = Theme.TextDark
@@ -358,7 +603,7 @@ function Library:CreateWindow(config)
             end
             SelectedTab = {Button = TabButton, Elements = Elements}
             Tween(TabButton, {BackgroundColor3 = Theme.Accent})
-            TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            TabButton.TextColor3 = CurrentTheme == "Dark" and Color3.fromRGB(10, 10, 12) or Color3.fromRGB(255, 255, 255)
             Elements.Visible = true
         end
 
@@ -382,7 +627,7 @@ function Library:CreateWindow(config)
             ApplyTheme = function()
                 if SelectedTab and SelectedTab.Button == TabButton then
                     TabButton.BackgroundColor3 = Theme.Accent
-                    TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    TabButton.TextColor3 = CurrentTheme == "Dark" and Color3.fromRGB(10, 10, 12) or Color3.fromRGB(255, 255, 255)
                 else
                     TabButton.BackgroundColor3 = Theme.Element
                     TabButton.TextColor3 = Theme.TextDark
@@ -465,7 +710,7 @@ function Library:CreateWindow(config)
 
             local Circle = Create("Frame", {
                 Parent = ToggleBg,
-                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                BackgroundColor3 = CurrentTheme == "Dark" and Color3.fromRGB(20, 20, 25) or Color3.fromRGB(255, 255, 255),
                 Position = Value and UDim2.new(1, -20, 0.5, -9) or UDim2.new(0, 2, 0.5, -9),
                 Size = UDim2.new(0, 18, 0, 18)
             })
@@ -490,6 +735,7 @@ function Library:CreateWindow(config)
                     Label.TextColor3 = Theme.Text
                     Frame.UIStroke.Color = Theme.Stroke
                     ToggleBg.BackgroundColor3 = Value and Theme.Accent or Theme.ToggleOff
+                    Circle.BackgroundColor3 = CurrentTheme == "Dark" and Color3.fromRGB(20, 20, 25) or Color3.fromRGB(255, 255, 255)
                 end
             })
 
