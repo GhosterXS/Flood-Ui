@@ -17,7 +17,7 @@ Add your installation method here.
 ## Example
 
 ```lua
-local Flood = loadstring(game:HttpGet("YOUR_URL_HERE"))()
+local Flood = loadstring(game:HttpGet("https://raw.githubusercontent.com/GhosterXS/Flood-Ui/refs/heads/main/Flood%20Ui"))()
 
 local Window = Flood:CreateWindow({
     Title = "Flood UI",
