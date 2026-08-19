@@ -17,119 +17,114 @@ Add your installation method here.
 ## Example
 
 ```lua
+--[[
+    Flood Ui - Example (Showcase Only)
+    Shows available functions. Callbacks are empty on purpose.
+    GitHub: GhosterXS/Flood-Ui
+]]
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/GhosterXS/Flood-Ui/refs/heads/main/Flood%20Ui"))()
 
 local Window = Library:CreateWindow({
     Name = "Flood Ui Example",
-    LoadingTitle = "Flood Ui Example",
-    LoadingSubtitle = "by GhosterXS",
+    LoadingTitle = "Flood Ui",
+    LoadingSubtitle = "Interface Example",
     Theme = Color3.fromRGB(255, 255, 255)
 })
 
-local Main = Window:CreateTab("Main")
-local Player = Window:CreateTab("Player")
-local Misc = Window:CreateTab("Misc")
+local Tab = Window:CreateTab("Example Tab")
+local Tab2 = Window:CreateTab("Another Tab")
 
-Main:CreateSection("Welcome")
-Main:CreateLabel("Flood Ui is loaded")
-Main:CreateLabel("Theme and keybind auto-save")
+------------------------------------------------
+-- Example Tab
+------------------------------------------------
+Tab:CreateSection("Section Example")
 
-Main:CreateButton({
-    Name = "Test Notification",
+local Label = Tab:CreateLabel("Label Example")
+-- Label:Set("Updated Label")
+
+Tab:CreateButton({
+    Name = "Button Example",
     Callback = function()
-        Library:Notify({
-            Title = "Flood Ui",
-            Content = "Notification works!",
-            Duration = 4
-        })
+        -- The function that takes place when the button is pressed
     end
 })
 
-Main:CreateToggle({
-    Name = "Example Toggle",
+local Toggle = Tab:CreateToggle({
+    Name = "Toggle Example",
     Default = false,
     Callback = function(Value)
-        print("Toggle:", Value)
+        -- Value is true or false
+    end
+})
+-- Toggle:Set(true)
+-- Toggle:Get()
+
+Tab:CreateSlider({
+    Name = "Slider Example",
+    Min = 0,
+    Max = 100,
+    Default = 50,
+    Callback = function(Value)
+        -- Value is the current number
     end
 })
 
-Main:CreateDropdown({
-    Name = "Mode",
+Tab:CreateDropdown({
+    Name = "Dropdown Example",
     Options = {"Option 1", "Option 2", "Option 3"},
     Default = "Option 1",
     Callback = function(Value)
-        print("Selected:", Value)
+        -- Value is the selected option
     end
 })
 
-Main:CreateSection("Credits")
-Main:CreateLabel("UI Library: Flood Ui")
-Main:CreateLabel("GitHub: GhosterXS/Flood-Ui")
+Library:Notify({
+    Title = "Notification Title",
+    Content = "Notification Content",
+    Duration = 4
+})
 
-Player:CreateSection("Character")
+------------------------------------------------
+-- Another Tab
+------------------------------------------------
+Tab2:CreateSection("Section Example 2")
 
-Player:CreateSlider({
-    Name = "WalkSpeed",
-    Min = 16,
-    Max = 200,
-    Default = 16,
-    Callback = function(Value)
-        local lp = game.Players.LocalPlayer
-        if lp.Character and lp.Character:FindFirstChild("Humanoid") then
-            lp.Character.Humanoid.WalkSpeed = Value
-        end
+Tab2:CreateLabel("Label Example 2")
+
+Tab2:CreateButton({
+    Name = "Button Example 2",
+    Callback = function()
+        -- The function that takes place when the button is pressed
     end
 })
 
-Player:CreateSlider({
-    Name = "JumpPower",
-    Min = 50,
-    Max = 200,
-    Default = 50,
-    Callback = function(Value)
-        local lp = game.Players.LocalPlayer
-        if lp.Character and lp.Character:FindFirstChild("Humanoid") then
-            lp.Character.Humanoid.JumpPower = Value
-        end
-    end
-})
-
-Player:CreateToggle({
-    Name = "Infinite Jump",
+Tab2:CreateToggle({
+    Name = "Toggle Example 2",
     Default = false,
     Callback = function(Value)
-        print("Infinite Jump:", Value)
+        -- Value is true or false
     end
 })
 
-Misc:CreateSection("Extra")
-
-Misc:CreateButton({
-    Name = "Print Hello",
-    Callback = function()
-        print("Hello from Flood Ui")
-        Library:Notify({
-            Title = "Hello",
-            Content = "Hello World!",
-            Duration = 3
-        })
-    end
-})
-
-Misc:CreateSlider({
-    Name = "FOV",
-    Min = 70,
-    Max = 120,
-    Default = 70,
+Tab2:CreateSlider({
+    Name = "Slider Example 2",
+    Min = 0,
+    Max = 100,
+    Default = 25,
     Callback = function(Value)
-        workspace.CurrentCamera.FieldOfView = Value
+        -- Value is the current number
     end
 })
 
-Misc:CreateSection("Info")
-Misc:CreateLabel("Keybind default: RightControl")
-Misc:CreateLabel("Settings: topbar 3 lines icon")
-Misc:CreateLabel("Theme button: Light / Dark")
+Tab2:CreateDropdown({
+    Name = "Dropdown Example 2",
+    Options = {"Option A", "Option B", "Option C"},
+    Default = "Option A",
+    Callback = function(Value)
+        -- Value is the selected option
+    end
+})
 
 ```
 
