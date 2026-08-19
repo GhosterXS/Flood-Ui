@@ -1,0 +1,111 @@
+================================================
+ Flood Ui - Commands / API Reference
+ GitHub: GhosterXS/Flood-Ui
+ Load: https://raw.githubusercontent.com/GhosterXS/Flood-Ui/refs/heads/main/Flood%20Ui
+================================================
+
+1) LOAD LIBRARY
+------------------------------------------------
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/GhosterXS/Flood-Ui/refs/heads/main/Flood%20Ui"))()
+
+
+2) CREATE WINDOW
+------------------------------------------------
+local Window = Library:CreateWindow({
+    Name = "My Hub",
+    LoadingTitle = "My Hub",
+    LoadingSubtitle = "by Author",
+    Theme = Color3.fromRGB(255, 255, 255)
+})
+
+Options:
+  Name             string   Title in topbar
+  LoadingTitle     string   Title on loading screen
+  LoadingSubtitle  string   Subtitle on loading screen
+  Theme            Color3   Accent color (default white)
+  ToggleKey        Enum.KeyCode   Only used if no saved keybind
+
+
+3) CREATE TAB
+------------------------------------------------
+local Tab = Window:CreateTab("Tab Name")
+
+
+4) CREATE SECTION
+------------------------------------------------
+Tab:CreateSection("Section Name")
+
+
+5) CREATE LABEL
+------------------------------------------------
+local Label = Tab:CreateLabel("Text here")
+Label:Set("New text")
+
+
+6) CREATE BUTTON
+------------------------------------------------
+Tab:CreateButton({
+    Name = "Click Me",
+    Callback = function()
+        print("Clicked")
+    end
+})
+
+
+7) CREATE TOGGLE
+------------------------------------------------
+local Toggle = Tab:CreateToggle({
+    Name = "Enable Feature",
+    Default = false,
+    Callback = function(Value)
+        print(Value)
+    end
+})
+Toggle:Set(true)
+Toggle:Get()
+
+
+8) CREATE SLIDER
+------------------------------------------------
+Tab:CreateSlider({
+    Name = "WalkSpeed",
+    Min = 16,
+    Max = 200,
+    Default = 16,
+    Callback = function(Value)
+        print(Value)
+    end
+})
+
+
+9) CREATE DROPDOWN
+------------------------------------------------
+Tab:CreateDropdown({
+    Name = "Select Mode",
+    Options = {"Easy", "Medium", "Hard"},
+    Default = "Easy",
+    Callback = function(Value)
+        print(Value)
+    end
+})
+
+
+10) NOTIFY
+------------------------------------------------
+Library:Notify({
+    Title = "Title",
+    Content = "Message here",
+    Duration = 4
+})
+
+
+11) UI FEATURES (built-in)
+------------------------------------------------
+- Theme Dark / Light (button on topbar)
+- Settings (3 lines icon): change keybind, Unload Script
+- Auto-save theme + keybind (FloodUi/FloodUiSettings.json)
+- Drag window by topbar
+- Open/Close keybind (default RightControl)
+- Loading screen with fixed brand "Flood Ui"
+
+================================================
