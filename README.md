@@ -1,2 +1,2 @@
 # Flood-Ui
-Flood UI is a UI inspired by Raifyld, customizable with various animations.
+Modern and customizable Roblox UI library with smooth animations, flexible components and an easy-to-use API.
